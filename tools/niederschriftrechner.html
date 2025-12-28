@@ -61,7 +61,7 @@ input:out-of-range {
 
 <h3>Rechner zur Niederschrift der Abschlussprüfung</h3>
 
-<button onclick="clearInputs()">Alle Eingaben leeren</button>
+<button onclick="clearInputs()" tabindex="20">Alle Eingaben leeren</button>
 
 <table>
 <tr>
@@ -93,72 +93,72 @@ input:out-of-range {
 
 <tr>
 <td>1. Ausgangssituation</td>
-<td class="input"><input id="PI1" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI1" type="number" min="0" max="100" tabindex="1"></td>
 <td>15%</td>
-<td class="calc"><input id="PO1" readonly></td>
+<td class="calc"><input id="PO1" readonly tabindex="-1"></td>
 <td></td>
 <td>Präsentation – Aufbau und inhaltliche Struktur</td>
-<td class="input"><input id="T3" type="number" min="0" max="100"></td>
+<td class="input"><input id="T3" type="number" min="0" max="100" tabindex="7"></td>
 <td>1/3</td>
-<td class="calc"><input id="W3" readonly></td>
+<td class="calc"><input id="W3" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
 <td>2. Ressourcen und Ablaufplanung</td>
-<td class="input"><input id="PI2" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI2" type="number" min="0" max="100" tabindex="2"></td>
 <td>15%</td>
-<td class="calc"><input id="PO2" readonly></td>
+<td class="calc"><input id="PO2" readonly tabindex="-1"></td>
 <td></td>
 <td>Präsentation – Sprachliche Gestaltung</td>
-<td class="input"><input id="T4" type="number" min="0" max="100"></td>
+<td class="input"><input id="T4" type="number" min="0" max="100" tabindex="8"></td>
 <td>1/3</td>
-<td class="calc"><input id="W4" readonly></td>
+<td class="calc"><input id="W4" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
 <td>3. Durchführung und Auftragsbearbeitung</td>
-<td class="input"><input id="PI3" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI3" type="number" min="0" max="100" tabindex="3"></td>
 <td>30%</td>
-<td class="calc"><input id="PO3" readonly></td>
+<td class="calc"><input id="PO3" readonly tabindex="-1"></td>
 <td></td>
 <td>Präsentation – Zielgruppengerechte Darstellung</td>
-<td class="input"><input id="T5" type="number" min="0" max="100"></td>
+<td class="input"><input id="T5" type="number" min="0" max="100" tabindex="9"></td>
 <td>1/3</td>
-<td class="calc"><input id="W5" readonly></td>
+<td class="calc"><input id="W5" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
 <td>4. Projektergebnisse</td>
-<td class="input"><input id="PI4" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI4" type="number" min="0" max="100" tabindex="4"></td>
 <td>15%</td>
-<td class="calc"><input id="PO4" readonly></td>
+<td class="calc"><input id="PO4" readonly tabindex="-1"></td>
 <td></td>
 <th colspan="3">Präsentation - Zwischensumme</th>
-<th class="calc"><input id="W6" readonly></th>
+<th class="calc"><input id="W6" readonly tabindex="-1"></th>
 </tr>
 
 <tr>
 <td>5. Gestaltung des Portfolios</td>
-<td class="input"><input id="PI5" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI5" type="number" min="0" max="100" tabindex="5"></td>
 <td>15%</td>
-<td class="calc"><input id="PO5" readonly></td>
+<td class="calc"><input id="PO5" readonly tabindex="-1"></td>
 <td></td>
 <td>Fachgespräch – Beherrschung des für die Projektarbeit relevanten Fachhintergrundes</td>
-<td class="input"><input id="T7" type="number" min="0" max="100"></td>
+<td class="input"><input id="T7" type="number" min="0" max="100" tabindex="10"></td>
 <td>1/3</td>
-<td class="calc"><input id="W7" readonly></td>
+<td class="calc"><input id="W7" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
 <td>Kundendokumentation</td>
-<td class="input"><input id="PI6" type="number" min="0" max="100"></td>
+<td class="input"><input id="PI6" type="number" min="0" max="100" tabindex="6"></td>
 <td>10%</td>
-<td class="calc"><input id="PO6" readonly></td>
+<td class="calc"><input id="PO6" readonly tabindex="-1"></td>
 <td></td>
 <td>Fachgespräch – Problemerfassung</td>
-<td class="input"><input id="T8" type="number" min="0" max="100"></td>
+<td class="input"><input id="T8" type="number" min="0" max="100" tabindex="11"></td>
 <td>1/3</td>
-<td class="calc"><input id="W8" readonly></td>
+<td class="calc"><input id="W8" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
@@ -168,9 +168,9 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td>Fachgespräch – Argumentation und Begründung</td>
-<td class="input"><input id="T9" type="number" min="0" max="100"></td>
+<td class="input"><input id="T9" type="number" min="0" max="100" tabindex="12"></td>
 <td>1/3</td>
-<td class="calc"><input id="W9" readonly></td>
+<td class="calc"><input id="W9" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
@@ -180,16 +180,16 @@ input:out-of-range {
 <td></td>
 <td></td>
 <th colspan="3">Fachgespräch - Zwischensumme</th>
-<td class="calc"><input id="W10" readonly></td>
+<td class="calc"><input id="W10" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
 <th colspan="3">Gesamtbewertung Projektbericht</th>
-<td class="calc"><input id="PO7" readonly></td>
+<td class="calc"><input id="PO7" readonly tabindex="-1"></td>
 
 <td></td>
 <th colspan="3">Gesamtbewertung Präsentation & Fachgespräch</th>
-<td class="calc"><input id="W12" readonly></td>
+<td class="calc"><input id="W12" readonly tabindex="-1"></td>
 </tr>
 
 </table>
@@ -222,11 +222,11 @@ input:out-of-range {
 </tr>
 <tr>
 <td>Einrichten eines IT-gestützten Arbeitsplatzes</td>
-<td class="input"><input id="T1I1" type="number" min="0" max="100"></td>
+<td class="input"><input id="T1I1" type="number" min="0" max="100" tabindex="13"></td>
 <td>x</td>
 <td>20</td>
 <td>=</td>
-<td><input id="T1O1" readonly></td>
+<td><input id="T1O1" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
@@ -240,8 +240,8 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td></td>
-<td><input id="T1O2" readonly></td>
-<td><input id="T1O3" readonly></td>
+<td><input id="T1O2" readonly tabindex="-1"></td>
+<td><input id="T1O3" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
@@ -250,7 +250,7 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td></td>
-<td><input id="T1O4" readonly></td>
+<td><input id="T1O4" readonly tabindex="-1"></td>
 <td>:</td>
 <td>20</td>
 <td></td>
@@ -264,8 +264,8 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td></td>
-<td><input id="T1O5" readonly></td>
-<td><input id="T1O6" readonly></td>
+<td><input id="T1O5" readonly tabindex="-1"></td>
+<td><input id="T1O6" readonly tabindex="-1"></td>
 </tr>
 
 <tr>
@@ -295,76 +295,76 @@ input:out-of-range {
 
 <tr>
 <td>Konzeption und Administration von IT-Systemen</td>
-<td class="input"><input id="T2I1" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I1" type="number" min="0" max="100" tabindex="14"></td>
 <td>x</td>
 <td>2</td>
 <td>+</td>
-<td class="input"><input id="T2I2" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I2" type="number" min="0" max="100" tabindex="15"></td>
 <td>=</td>
-<td id="TDT2O1"><input id="T2O1" readonly></td>
+<td id="TDT2O1"><input id="T2O1" readonly tabindex="-1"></td>
 <td>:</td>
 <td>3</td>
 <td>=</td>
-<td id="TDT2O2"><input id="T2O2" readonly></td>
+<td id="TDT2O2"><input id="T2O2" readonly tabindex="-1"></td>
 <td>x</td>
 <td>10</td>
 <td>=</td>
-<td id="TDT2O3"><input id="T2O3" readonly></td>
+<td id="TDT2O3"><input id="T2O3" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
-<td id="TDT2O4"><input id="T2O4" readonly></td>
-<td id="TDT2O5"><input id="T2O5" readonly></td>
+<td id="TDT2O4"><input id="T2O4" readonly tabindex="-1"></td>
+<td id="TDT2O5"><input id="T2O5" readonly tabindex="-1"></td>
 <td id="bes1">&nbsp;</td>
 </tr>
 
 <tr>
 <td>Analyse und Entwicklung von Netzwerken</td>
-<td class="input"><input id="T2I3" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I3" type="number" min="0" max="100" tabindex="16"></td>
 <td>x</td>
 <td>2</td>
 <td>+</td>
-<td class="input"><input id="T2I4" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I4" type="number" min="0" max="100" tabindex="17"></td>
 <td>=</td>
-<td id="TDT2O6"><input id="T2O6" readonly></td>
+<td id="TDT2O6"><input id="T2O6" readonly tabindex="-1"></td>
 <td>:</td>
 <td>3</td>
 <td>=</td>
-<td id="TDT2O7"><input id="T2O7" readonly></td>
+<td id="TDT2O7"><input id="T2O7" readonly tabindex="-1"></td>
 <td>x</td>
 <td>10</td>
 <td>=</td>
-<td id="TDT2O8"><input id="T2O8" readonly></td>
+<td id="TDT2O8"><input id="T2O8" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
-<td id="TDT2O9"><input id="T2O9" readonly></td>
-<td id="TDT2O10"><input id="T2O10" readonly></td>
+<td id="TDT2O9"><input id="T2O9" readonly tabindex="-1"></td>
+<td id="TDT2O10"><input id="T2O10" readonly tabindex="-1"></td>
 <td id="bes2">&nbsp;</td>
 </tr>
 
 <tr>
 <td>Wirtschafts- und Sozialkunde</td>
-<td class="input"><input id="T2I5" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I5" type="number" min="0" max="100" tabindex="18"></td>
 <td>x</td>
 <td>2</td>
 <td>+</td>
-<td class="input"><input id="T2I6" type="number" min="0" max="100"></td>
+<td class="input"><input id="T2I6" type="number" min="0" max="100" tabindex="19"></td>
 <td>=</td>
-<td id="TDT2O11"><input id="T2O11" readonly></td>
+<td id="TDT2O11"><input id="T2O11" readonly tabindex="-1"></td>
 <td>:</td>
 <td>3</td>
 <td>=</td>
-<td id="TDT2O12"><input id="T2O12" readonly></td>
+<td id="TDT2O12"><input id="T2O12" readonly tabindex="-1"></td>
 <td>x</td>
 <td>10</td>
 <td>=</td>
-<td id="TDT2O13"><input id="T2O13" readonly></td>
+<td id="TDT2O13"><input id="T2O13" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
-<td id="TDT2O14"><input id="T2O14" readonly></td>
-<td id="TDT2O15"><input id="T2O15" readonly></td>
+<td id="TDT2O14"><input id="T2O14" readonly tabindex="-1"></td>
+<td id="TDT2O15"><input id="T2O15" readonly tabindex="-1"></td>
 <td id="bes3">&nbsp;</td>
 </tr>
 
@@ -374,11 +374,11 @@ input:out-of-range {
 
 <tr>
 <td>Betriebliche Projektarbeit</td>
-<td><input id="E1" readonly></td>
+<td><input id="E1" readonly tabindex="-1"></td>
 <td>x</td>
 <td>50</td>
 <td>=</td>
-<td class="calc"><input id="E2" readonly></td>
+<td class="calc"><input id="E2" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
@@ -399,11 +399,11 @@ input:out-of-range {
 <tr>
 <td>Präsentation und Fachgespräch
 </td>
-<td><input id="E3" readonly></td>
+<td><input id="E3" readonly tabindex="-1"></td>
 <td>x</td>
 <td>50</td>
 <td>=</td>
-<td class="calc"><input id="E4" readonly></td>
+<td class="calc"><input id="E4" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
@@ -427,23 +427,23 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td></td>
-<td class="calc"><input id="E5" readonly></td>
+<td class="calc"><input id="E5" readonly tabindex="-1"></td>
 <td>:</td>
 <td>100</td>
 <td></td>
 <td></td>
 
 <td>=</td>
-<td class="calc"><input id="E6" readonly></td>
+<td class="calc"><input id="E6" readonly tabindex="-1"></td>
 <td>x</td>
 <td>50</td>
 <td>=</td>
-<td class="calc"><input id="E7" readonly></td>
+<td class="calc"><input id="E7" readonly tabindex="-1"></td>
 <td></td>
 <td></td>
 <td></td>
-<td class="calc"><input id="E8" readonly></td>
-<td class="calc"><input id="E9" readonly></td>
+<td class="calc"><input id="E8" readonly tabindex="-1"></td>
+<td class="calc"><input id="E9" readonly tabindex="-1"></td>
 <td id="bes4">&nbsp;</td>
 </tr>
 
@@ -463,12 +463,12 @@ input:out-of-range {
 <td></td>
 <td></td>
 <td></td>
-<td class="calc"><input id="E10" readonly></td>
+<td class="calc"><input id="E10" readonly tabindex="-1"></td>
 <td>:</td>
 <td>80</td>
 <td>=</td>
-<td class="calc"><input id="E11" readonly></td>
-<td class="calc"><input id="E12" readonly></td>
+<td class="calc"><input id="E11" readonly tabindex="-1"></td>
+<td class="calc"><input id="E12" readonly tabindex="-1"></td>
 <td id="bes5">&nbsp;</td>
 </tr>
 
@@ -483,7 +483,7 @@ input:out-of-range {
 	<td>1</td>
 	<td></td>
 	<td></td>
-	<td><input id="E13" readonly></td>
+	<td><input id="E13" readonly tabindex="-1"></td>
 	<td>+</td>
 	<td></td>
 	<td></td>
@@ -493,12 +493,12 @@ input:out-of-range {
 	<td>2</td>
 	<td></td>
 	<td></td>
-	<td><input id="E14" readonly></td>
+	<td><input id="E14" readonly tabindex="-1"></td>
 	<td>):</td>
 	<td>100</td>
 	<td>=</td>
-	<td class="calc"><input id="E15" readonly></td>
-	<td class="calc"><input id="E16" readonly></td>
+	<td class="calc"><input id="E15" readonly tabindex="-1"></td>
+	<td class="calc"><input id="E16" readonly tabindex="-1"></td>
 	<td id="bes6">&nbsp;</td>
 </tr>
 

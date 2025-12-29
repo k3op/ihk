@@ -54,6 +54,28 @@ input:out-of-range {
   background-color: #fdf2f2;
 }
 
+
+@media print {
+	:root {
+		print-color-adjust: exact;
+		page-break-inside: avoid;
+		break-inside: avoid;
+		transform: scale(0.85);
+		transform-origin: top left;
+	}
+	#clearButton {
+		display: none;
+	}
+	#legendTable {
+		display: none;
+	}
+	
+	@page {
+		size: A4;
+		margin: 10mm;
+	}
+}
+
 </style>
 </head>
 
@@ -61,21 +83,21 @@ input:out-of-range {
 
 <h3>Rechner zur Niederschrift der Abschlussprüfung</h3>
 
-<button onclick="clearInputs()" tabindex="20">Alle Eingaben leeren</button>
+<button id="clearButton" onclick="clearInputs()" tabindex="20">Alle Eingaben leeren</button>
 
-<table>
-<tr>
-    <th>Legende</th>
-</tr>
-<tr>
-<td class="input">Eingabefeld</td>
-</tr>
-<tr>
-<td class="calc">Berechnung, auf die Niederschrift zu übertragen</td>
-</tr>
-<tr>
-<td class="calcmep">Berechnung auf der Niederschrift zu korrigieren sofern eine MEP vorliegt (Werte sind bereits vorausgefüllt)</td>
-</tr>
+<table id="legendTable">
+	<tr>
+		<th>Legende</th>
+	</tr>
+	<tr>
+	<td class="input">Eingabefeld</td>
+	</tr>
+	<tr>
+	<td class="calc">Berechnung, auf die Niederschrift zu übertragen</td>
+	</tr>
+	<tr>
+	<td class="calcmep">Berechnung auf der Niederschrift zu korrigieren sofern eine MEP vorliegt (Werte sind bereits vorausgefüllt)</td>
+	</tr>
 </table>
 <br>
 <table>
@@ -596,6 +618,15 @@ function calcTeil2Erg(Punkte, Faktor1, Mepr, Faktor2, Faktor3){
     row.classList.remove("calcmep", "input", "calc","ok","nok","med");
 	if (value !=""){ 
 		row.classList.add(value);
+	}
+	if(rowId == "bes7") {
+		if(value == "ok") row.innerHTML = "Bestanden";
+		else row.innerHTML = "Nicht Bestanden";
+	}
+	else if (rowId.includes("bes")){
+		if(value == "ok") row.innerHTML = "✓";
+		else if (value == "med") row.innerHTML = "⚠";
+		else row.innerHTML = "X";
 	}
   }
   

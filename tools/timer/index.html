@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prüfungstimer</title>
+
+    <link rel="stylesheet" type="text/css"  href="styles.css" />
+</head>
+
+<body>
+<main>
+    <div class="topbar">
+        <div class="title">
+            <h1>Prüfungstimer</h1>
+            <p>Zum <a href="../niederschriftrechner.html">Niederschriftrechner</a> </p>
+        </div>
+        <div class="parameters" id="parameter_box">
+            <div id="param_pre">Dauer Präsentation
+                <input type="number" value="15" step="1" id="time_presentation" min="1"> min.
+            </div>
+            <div id="param_que">Dauer Fachgespräch
+                <input type="number" value="15" step="1" id="time_questionnaire" min="1"> min.
+            </div>
+        </div>
+    </div>
+
+    <aside class="box">
+        Über den Button <em>Start</em> kann der Timer gestartet werden. Wurde er manuell gestoppt, kann er nicht fortgesetzt werden. <br>
+        Sind <strong><span id="percent_blink"></span>%</strong> des Timers abgelaufen, zeigt der Timer eine Warnung an.
+    </aside>
+
+    <div class="container">
+        <div class="timer" id="timer_presentation">
+            <div class="header">Präsentation</div>
+            <span class="time" id="timer_presentation_minutes">--:--</span>
+            <button onclick="togglePresentation()" id="btn_pre">Start</button>
+            <button class="pip_btn" onclick="pre_pip()">Picture-In-Picture öffnen</button>
+        </div>
+
+        <div class="timer" id="timer_questionnaire">
+            <div class="header">Fachgespräch</div>
+            <span class="time" id="timer_questionnaire_minutes">--:--</span>
+            <button onclick="toggleQuestionnaire()" id="btn_que">Start</button>
+            <button class="pip_btn" onclick="que_pip()">Picture-In-Picture öffnen</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="box">
+        Diese Webseite ist vollständig eigenständig (es werden keine externen JavaScript- oder CSS-Dateien geladen).
+        Die auf dieser Seite eingegebenen Informationen verlassen Ihren Computer NICHT.
+        Für zusätzliche Sicherheit können Sie diese Seite auf Ihrem Computer speichern oder Ihre eigene Kopie von
+        <a href="https://github.com/k3op/ihk">https://github.com/k3op/ihk</a> abrufen.
+    </div>
+</footer>
+
+</body>
+
+<script src="script.js"></script>
+
+</html>

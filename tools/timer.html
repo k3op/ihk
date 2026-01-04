@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prüfungstimer</title>
+
+    <style>
+        :root{
+            --bg: #0b1220;
+            --panel: rgba(255,255,255,0.06);
+            --panel-strong: rgba(255,255,255,0.10);
+            --text: rgba(255,255,255,0.92);
+            --muted: rgba(255,255,255,0.72);
+            --border: rgba(255,255,255,0.14);
+
+            --accent: #7c3aed; /* violett */
+            --accent-2: #22c55e; /* grün */
+            --warn: #f59e0b; /* orange */
+            --danger: #ef4444; /* rot */
+
+            --shadow: 0 12px 34px rgba(0,0,0,0.35);
+            --radius: 16px;
+        }
+
+        * { box-sizing: border-box; }
+
+        body{
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+
+            background:
+                    radial-gradient(1200px 600px at 20% 0%, rgba(124,58,237,0.35), transparent 55%),
+                    radial-gradient(900px 500px at 90% 15%, rgba(34,197,94,0.22), transparent 60%),
+                    radial-gradient(900px 600px at 40% 100%, rgba(59,130,246,0.16), transparent 55%),
+                    var(--bg);
+
+            display: flex;
+            flex-direction: column;
+            padding: 28px 18px 18px;
+            gap: 18px;
+        }
+
+        main{
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .topbar{
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .title{
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .title h1{
+            margin: 0;
+            font-size: 20px;
+            letter-spacing: 0.2px;
+            font-weight: 700;
+        }
+
+        .title p{
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .parameters{
+            width: fit-content;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: linear-gradient(180deg, var(--panel), transparent 120%);
+            box-shadow: var(--shadow);
+            display: grid;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parameters div{
+            width: min-content;
+            white-space: nowrap;
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .parameters input{
+            appearance: textfield;
+            width: 64px;
+            padding: 8px 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.08);
+            color: var(--text);
+            outline: none;
+            transition: border-color .15s ease, box-shadow .15s ease, transform .05s ease;
+        }
+
+        .parameters input:focus{
+            border-color: rgba(124,58,237,0.75);
+            box-shadow: 0 0 0 4px rgba(124,58,237,0.18);
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .container{
+            display: grid;
+            grid-template-columns: repeat(2, minmax(240px, 1fr));
+            gap: 14px;
+        }
+
+        @media (max-width: 620px){
+            .container{ grid-template-columns: 1fr; }
+        }
+
+        .timer{
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 16px 16px 14px;
+            background: linear-gradient(180deg, var(--panel-strong), rgba(255,255,255,0.03));
+            box-shadow: var(--shadow);
+            display: grid;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timer::before{
+            content: "";
+            position: absolute;
+            inset: -2px;
+            background: radial-gradient(600px 180px at 20% 0%, rgba(255,255,255,0.10), transparent 60%);
+            pointer-events: none;
+        }
+
+        .header{
+            font-size: 13px;
+            color: var(--muted);
+            letter-spacing: 0.4px;
+            text-transform: uppercase;
+            margin: 0;
+            z-index: 1;
+        }
+
+        .time{
+            font-size: 48px;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 1px;
+            font-weight: 800;
+            margin: 2px 0 6px;
+            z-index: 1;
+            text-shadow: 0 6px 20px rgba(0,0,0,0.35);
+        }
+
+        .timer button{
+            z-index: 1;
+            width: 100%;
+            border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.16);
+            padding: 11px 12px;
+            font-weight: 700;
+            letter-spacing: 0.2px;
+            color: var(--text);
+            background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+            cursor: pointer;
+            transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+        }
+
+        .timer button:hover{
+            border-color: rgba(255,255,255,0.26);
+            box-shadow: 0 10px 22px rgba(0,0,0,0.22);
+        }
+
+        .timer button:active{
+            transform: translateY(1px);
+        }
+
+        .timer.green{
+            border-color: rgba(34,197,94,0.42);
+            background:
+                    radial-gradient(700px 220px at 20% 0%, rgba(34,197,94,0.28), transparent 58%),
+                    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+        }
+
+        .timer.red{
+            border-color: rgba(239,68,68,0.52);
+            background:
+                    radial-gradient(700px 220px at 20% 0%, rgba(239,68,68,0.35), transparent 58%),
+                    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+        }
+
+        .timer.yellow{
+            border-color: rgba(245,158,11,0.55);
+            animation: timer_blink 1s steps(1, end) infinite;
+        }
+
+        @keyframes timer_blink{
+            0%, 49%{
+                background:
+                        radial-gradient(700px 220px at 20% 0%, rgba(245,158,11,0.38), transparent 58%),
+                        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+            }
+            50%, 100%{
+                background:
+                        linear-gradient(180deg, var(--panel-strong), rgba(255,255,255,0.03));
+            }
+        }
+
+        .box{
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: rgba(255,255,255,0.05);
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        a{
+            color: rgba(255,255,255,0.88);
+            text-decoration: none;
+            border-bottom: 1px dashed rgba(255,255,255,0.35);
+        }
+
+        a:hover{
+            border-bottom-color: rgba(255,255,255,0.75);
+        }
+    </style>
+</head>
+
+<body>
+<main>
+    <div class="topbar">
+        <div class="title">
+            <h1>Prüfungstimer</h1>
+            <p>Zum <a href="niederschriftrechner.html">Niederschriftrechner</a> </p>
+        </div>
+        <div class="parameters">
+            <div>Dauer Präsentation
+                <input type="number" value="15" step="1" id="time_presentation" min="1"> min.
+            </div>
+            <div>Dauer Fachgespräch
+                <input type="number" value="15" step="1" id="time_questionnaire" min="1"> min.
+            </div>
+        </div>
+    </div>
+
+    <aside class="box">
+        Über den Button <em>Start</em> kann der Timer gestartet werden. Wurde er manuell gestoppt, kann er nicht fortgesetzt werden. <br>
+        Sind <strong><span id="percent_blink"></span>%</strong> des Timers abgelaufen, zeigt der Timer eine Warnung an.
+    </aside>
+
+    <div class="container">
+        <div class="timer" id="timer_presentation">
+            <div class="header">Präsentation</div>
+            <span class="time" id="timer_presentation_minutes">--:--</span>
+            <button onclick="togglePresentation()" id="btn_pre">Start</button>
+        </div>
+
+        <div class="timer" id="timer_questionnaire">
+            <div class="header">Fachgespräch</div>
+            <span class="time" id="timer_questionnaire_minutes">--:--</span>
+            <button onclick="toggleQuestionnaire()" id="btn_que">Start</button>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <div class="box">
+        Diese Webseite ist vollständig eigenständig (es werden keine externen JavaScript- oder CSS-Dateien geladen).
+        Die auf dieser Seite eingegebenen Informationen verlassen Ihren Computer NICHT.
+        Für zusätzliche Sicherheit können Sie diese Seite auf Ihrem Computer speichern oder Ihre eigene Kopie von
+        <a href="https://github.com/k3op/ihk">https://github.com/k3op/ihk</a> abrufen.
+    </div>
+</footer>
+
+</body>
+
+<script>
+    const blinkstart = 0.07;
+    let t_pre = false;
+    let interval_pre;
+    let t_que = false;
+    let interval_que;
+
+    document.getElementById("percent_blink").innerHTML = String((1 - blinkstart) * 100);
+
+    function togglePresentation() {
+        if(!t_pre){
+            let minutes = document.getElementById("time_presentation").value;
+
+            let box = document.getElementById("timer_presentation");
+            box.classList.remove("green");
+            box.classList.remove("yellow");
+            box.classList.remove("red");
+            box.classList.add("green");
+
+            const startTime = Date.now();
+            const targetTime = startTime + (minutes * 60 * 1000); // Convert seconds to milliseconds
+
+            interval_pre = setInterval(function() {
+                let elapsedTime = (targetTime - Date.now()) / 1000;
+                if (elapsedTime > 0) {
+                    let elap_minutes = parseInt(elapsedTime / 60);
+                    let elap_seconds = parseInt(elapsedTime % 60);
+                    document.getElementById('timer_presentation_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
+                } else {
+                    clearInterval(interval_pre);
+                    t_pre = false;
+
+                    box.classList.remove("yellow");
+                    box.classList.remove("green");
+                    box.classList.add("red");
+
+                    document.getElementById("btn_pre").innerText = "Start";
+                    document.getElementById('timer_presentation_minutes').textContent = "00:00";
+                    console.log("Countdown finished!");
+                    return;
+                }
+
+                let timer_percent = (elapsedTime/60) / minutes;
+                console.log(timer_percent);
+
+                if(timer_percent < blinkstart)
+                {
+                    if(box.classList.contains("green")) box.classList.remove("green");
+                    if(!box.classList.contains("yellow")) box.classList.add("yellow");
+                }
+
+            }, 100);
+
+            t_pre = true;
+            document.getElementById("btn_pre").innerText = "Stop";
+        }
+        else
+        {
+            clearInterval(interval_pre);
+            document.getElementById("btn_pre").innerText = "Start";
+            t_pre = false;
+        }
+    }
+
+    function toggleQuestionnaire() {
+        if(!t_que){
+            let minutes = document.getElementById("time_questionnaire").value;
+
+            let box = document.getElementById("timer_questionnaire");
+            box.classList.remove("green");
+            box.classList.remove("yellow");
+            box.classList.remove("red");
+            box.classList.add("green");
+
+            const startTime = Date.now();
+            const targetTime = startTime + (minutes * 60 * 1000); // Convert seconds to milliseconds
+
+
+            interval_que = setInterval(function() {
+                let elapsedTime = (targetTime - Date.now()) / 1000;
+                if (elapsedTime > 0) {
+                    let elap_minutes = parseInt(elapsedTime / 60);
+                    let elap_seconds = parseInt(elapsedTime % 60);
+                    document.getElementById('timer_questionnaire_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
+                } else {
+                    clearInterval(interval_que);
+                    t_que = false;
+
+                    box.classList.remove("yellow");
+                    box.classList.remove("green");
+                    box.classList.add("red");
+
+                    document.getElementById("btn_que").innerText = "Start";
+                    document.getElementById('timer_questionnaire_minutes').textContent = "00:00";
+                    console.log("Countdown finished!");
+                    return;
+                }
+
+                let timer_percent = (elapsedTime/60) / minutes;
+                console.log(timer_percent);
+                if(timer_percent < blinkstart)
+                {
+                    if(box.classList.contains("green")) box.classList.remove("green");
+                    if(!box.classList.contains("yellow")) box.classList.add("yellow");
+                }
+
+            }, 100);
+
+            t_que = true;
+            document.getElementById("btn_que").innerText = "Stop";
+        }
+        else
+        {
+            clearInterval(interval_que);
+            document.getElementById("btn_que").innerText = "Start";
+            t_que = false;
+        }
+    }
+</script>
+
+</html>

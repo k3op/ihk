@@ -42,6 +42,10 @@ th {
 .calcmep {
     background: #f8cfa8;
 }
+.hint {
+    font-weight: 300;
+    font-size: 0.9em;
+}
 input {
     width: 100%;
     box-sizing: border-box;
@@ -69,7 +73,9 @@ input:out-of-range {
 	#legendTable {
 		display: none;
 	}
-	
+	.hint {
+        display: none;
+    }
 	@page {
 		size: A4;
 		margin: 10mm;
@@ -81,7 +87,8 @@ input:out-of-range {
 </head>
 
 <body>
-
+<a class="hint" href="/ihk">Home</a>
+<a class="hint" href="timer/index.html">Prüfungstimer</a>
 <h3>Rechner zur Niederschrift der Abschlussprüfung</h3>
 
 <button id="clearButton" onclick="clearInputs()" tabindex="20">Alle Eingaben leeren</button>
@@ -560,6 +567,8 @@ bewertet worden sind.
 	</td></tr>
 	<tr><td>
 		Diese Tools sind Open Source und verfügbar auf <a href="https://github.com/k3op/ihk">GitHub</a>. Lizenziert unter <a href="../LICENSE">GNU GPL v3</a>.
+        <br>
+
 	</td></tr>
 </table>
 

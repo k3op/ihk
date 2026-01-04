@@ -26,8 +26,6 @@ async function pre_pip()
         height: 320
     });
 
-    await pipWindow.document.head.appendChild( title );
-
     let css = document.createElement("link");
     css.rel = "stylesheet";
     css.href = "styles.css";

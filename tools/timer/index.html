@@ -13,8 +13,10 @@
 <main>
     <div class="topbar">
         <div class="title">
+            <div><a class="hint" href="/ihk">Home</a> </div>
             <h1>Prüfungstimer</h1>
-            <p>Zum <a href="../niederschriftrechner.html">Niederschriftrechner</a> </p>
+            <div>Zum <a href="../niederschriftrechner.html">Niederschriftrechner</a> </div>
+
         </div>
         <div class="parameters" id="parameter_box">
             <div id="param_pre">Dauer Präsentation
@@ -35,14 +37,14 @@
         <div class="timer" id="timer_presentation">
             <div class="header">Präsentation</div>
             <span class="time" id="timer_presentation_minutes">--:--</span>
-            <button onclick="togglePresentation()" id="btn_pre">Start</button>
+            <button onclick="togglePresentation()" class="main_btn" id="btn_pre">Start</button>
             <button class="pip_btn" onclick="pre_pip()">Picture-In-Picture öffnen</button>
         </div>
 
         <div class="timer" id="timer_questionnaire">
             <div class="header">Fachgespräch</div>
             <span class="time" id="timer_questionnaire_minutes">--:--</span>
-            <button onclick="toggleQuestionnaire()" id="btn_que">Start</button>
+            <button onclick="toggleQuestionnaire()" class="main_btn" id="btn_que">Start</button>
             <button class="pip_btn" onclick="que_pip()">Picture-In-Picture öffnen</button>
         </div>
     </div>

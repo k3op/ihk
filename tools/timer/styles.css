@@ -165,7 +165,7 @@ input::-webkit-inner-spin-button {
     text-shadow: 0 6px 20px rgba(0,0,0,0.35);
 }
 
-button{
+.main_btn{
     z-index: 1;
     width: 100%;
     border-radius: 14px;
@@ -179,8 +179,26 @@ button{
     transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
 }
 
-button.small{
+.pip_btn{
+    z-index: 1;
+    width: 100%;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.16);
+    padding: 5px 6px;
+    font-weight: 600;
+    margin-top: 5px;
+    letter-spacing: 0.2px;
+    color: var(--text);
+    background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+    cursor: pointer;
+    transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
 
+}
+
+.hint {
+    font-size: 11px;
+    color: var(--muted);
+    z-index: 1;
 }
 
 .timer button:hover{

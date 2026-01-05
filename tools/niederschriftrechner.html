@@ -794,17 +794,17 @@ function recalc() {
 	W4.value = roundCommercialtwodigits(num("W4"))
 	W5.value = roundCommercialtwodigits(num("W5"))
 
-    W7.value = roundCommercialtwodigits("T7", 1/3);
-    W8.value = roundCommercialtwodigits("T8", 1/3);
-    W9.value = roundCommercialtwodigits("T9", 1/3);
+    W7.value = calcWeighted("T7", 1/3);
+    W8.value = calcWeighted("T8", 1/3);
+    W9.value = calcWeighted("T9", 1/3);
 
     W10.value = roundCommercial(
         (num("W7") || 0) + (num("W8") || 0) + (num("W9") || 0)
     );
 
-	W7.value = roundCommercial(num("W7"))
-	W8.value = roundCommercial(num("W8"))
-	W9.value = roundCommercial(num("W9"))
+	W7.value = roundCommercialtwodigits(num("W7"))
+	W8.value = roundCommercialtwodigits(num("W8"))
+	W9.value = roundCommercialtwodigits(num("W9"))
     if (num("W6") !== null || num("W10") !== null) {
         W12.value = roundCommercial(		//W12 = Gesamtbewertung Präsentation und Fachgespräch
             ((num("W6") || 0) + (num("W10") || 0)) / 2	//W6 = Zwischensumme Präsentation, W10 = Zwischensumme Fachgespräch

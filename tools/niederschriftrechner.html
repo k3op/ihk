@@ -588,9 +588,11 @@ function calcWeighted(T, V) {
     return (t * V );
 }
 function roundCommercial(x) {
-    return Math.round(x);
+    return Math.round(x );
 }
-
+function roundCommercialtwodigits(x) {
+    return Math.round(x * 100) / 100;
+}
 function recalcTeil1(){
     T1O1.value = calcWeighted("T1I1", 20);
 	T1O4.value = num("T1O1");
@@ -788,13 +790,13 @@ function recalc() {
     W6.value = roundCommercial(
         (num("W3") || 0) + (num("W4") || 0) + (num("W5") || 0)
     );
-	W3.value = roundCommercial(num("W3"))
-	W4.value = roundCommercial(num("W4"))
-	W5.value = roundCommercial(num("W5"))
+	W3.value = roundCommercialtwodigits(num("W3"))
+	W4.value = roundCommercialtwodigits(num("W4"))
+	W5.value = roundCommercialtwodigits(num("W5"))
 
-    W7.value = calcWeighted("T7", 1/3);
-    W8.value = calcWeighted("T8", 1/3);
-    W9.value = calcWeighted("T9", 1/3);
+    W7.value = roundCommercialtwodigits("T7", 1/3);
+    W8.value = roundCommercialtwodigits("T8", 1/3);
+    W9.value = roundCommercialtwodigits("T9", 1/3);
 
     W10.value = roundCommercial(
         (num("W7") || 0) + (num("W8") || 0) + (num("W9") || 0)
@@ -820,12 +822,12 @@ function recalc() {
         (num("PO1") || 0) + (num("PO2") || 0) + (num("PO3") || 0)+ (num("PO4") || 0)+ (num("PO5") || 0)+ (num("PO6") || 0)
     );
 
-	PO1.value = roundCommercial(num("PO1"));
-	PO2.value = roundCommercial(num("PO2"));
-	PO3.value = roundCommercial(num("PO3"));
-	PO4.value = roundCommercial(num("PO4"));
-	PO5.value = roundCommercial(num("PO5"));
-	PO6.value = roundCommercial(num("PO6"));
+	PO1.value = roundCommercialtwodigits(num("PO1"));
+	PO2.value = roundCommercialtwodigits(num("PO2"));
+	PO3.value = roundCommercialtwodigits(num("PO3"));
+	PO4.value = roundCommercialtwodigits(num("PO4"));
+	PO5.value = roundCommercialtwodigits(num("PO5"));
+	PO6.value = roundCommercialtwodigits(num("PO6"));
 
 	//PO7 = Gesamtbewertung Projektbericht
 	E1.value = num("PO7");	  		// E1=Ergebnissektion Betriebliche Projektarbeit

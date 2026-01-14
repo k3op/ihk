@@ -128,9 +128,7 @@
         }
 
         .container{
-            display: grid;
-            grid-template-columns: repeat(2, minmax(240px, 1fr));
-            gap: 14px;
+            display: block;
         }
 
         @media (max-width: 620px){
@@ -188,6 +186,13 @@
             background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
             cursor: pointer;
             transition: transform .08s ease, box-shadow .15s ease, border-color .15s ease, background .15s ease;
+            pointer-events: auto;
+        }
+
+        .main_btn:disabled{
+            cursor: not-allowed;
+            opacity: 0.5;
+
         }
 
         .pip_btn{
@@ -237,10 +242,15 @@
 
         .timer.yellow{
             border-color: rgba(245,158,11,0.55);
-            animation: timer_blink 1s steps(1, end) infinite;
+            animation: timer_blink_yellow 1s steps(1, end) infinite;
         }
 
-        @keyframes timer_blink{
+        .timer.waiting {
+            border-color: rgba(89, 245, 11, 0.38);
+            animation: timer_blink_green 1s steps(1, end) infinite;
+        }
+
+        @keyframes timer_blink_yellow{
             0%, 49%{
                 background:
                         radial-gradient(700px 220px at 20% 0%, rgba(245,158,11,0.38), transparent 58%),
@@ -250,6 +260,22 @@
                 background:
                         linear-gradient(180deg, var(--panel-strong), rgba(255,255,255,0.03));
             }
+        }
+
+        @keyframes timer_blink_green{
+            25%, 49%{
+                background:
+                        radial-gradient(700px 220px at 20% 0%, rgba(89, 245, 11, 0.38), transparent 58%),
+                        linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.03));
+            }
+            50%, 100%{
+                background:
+                        linear-gradient(180deg, var(--panel-strong), rgba(255,255,255,0.03));
+            }
+        }
+
+        .hidden {
+            visibility: hidden;
         }
 
         .box{
@@ -303,23 +329,19 @@
     </div>
 
     <aside class="box">
-        Über den Button <em>Start</em> kann der Timer gestartet werden. Wurde er manuell gestoppt, kann er nicht fortgesetzt werden. <br>
+        Über den Button <em>Start</em> kann der Timer gestartet werden.<br>
+        Während der Timer läuft, lassen sich einzelne Phasen überspringen. Ist der Timer angehalten, kann er zurückgesetzt werden. <br>
         Sind <strong><span id="percent_blink"></span>%</strong> des Timers abgelaufen, zeigt der Timer eine Warnung an.
     </aside>
 
     <div class="container">
         <div class="timer" id="timer_presentation">
-            <div class="header">Präsentation</div>
+            <div class="header" id="phase_display">Aktuelle Phase: Vor Beginn der Prüfung</div>
             <span class="time" id="timer_presentation_minutes">--:--</span>
-            <button onclick="togglePresentation()" class="main_btn" id="btn_pre">Start</button>
+            <div class="header hidden" id="presentation_duration">---</div>
+            <button onclick="startTimer()" class="main_btn" id="btn_pre">Start</button>
+            <button onclick="skip_presentation()" class="main_btn" id="btn_skip" disabled>Präsentation beenden</button>
             <button class="pip_btn" onclick="pre_pip()">Picture-In-Picture öffnen</button>
-        </div>
-
-        <div class="timer" id="timer_questionnaire">
-            <div class="header">Fachgespräch</div>
-            <span class="time" id="timer_questionnaire_minutes">--:--</span>
-            <button onclick="toggleQuestionnaire()" class="main_btn" id="btn_que">Start</button>
-            <button class="pip_btn" onclick="que_pip()">Picture-In-Picture öffnen</button>
         </div>
     </div>
 </main>
@@ -334,10 +356,31 @@
 </footer>
 <script>
     const blinkstart = 0.07;
-    let t_pre = false;
+    /**
+     * Current state of the timer, -1 = Stopped, 0 = paused, 1 = presentation running, 2 = wait time active; 3 = questionnaire running, 4 = finished;
+     * @type {number}
+     */
+    let t_state = -1;
+
+    let skipped = false;
+
     let interval_pre;
-    let t_que = false;
-    let interval_que;
+    let targetTime;
+    let remainingTime;
+    let lastState;
+    let examDuration;
+
+    let time_presentation;
+    let duration_presentation;
+    let time_questionnaire;
+
+    let startTime;
+
+    let waitTime = 60;
+    let waitTargetTime;
+    let elapsedWaitTime;
+
+    let timerBox = document.getElementById("timer_presentation");
 
     document.getElementById("percent_blink").innerHTML = String((1 - blinkstart) * 100);
 
@@ -351,14 +394,12 @@
         let parameter_element = document.getElementById("parameter_box");
         let parameter_clone = await parameter_element.cloneNode(true);
 
-        parameter_clone.getElementsByTagName("div").param_que.remove()
-
         let btn_pip = box_clone.getElementsByClassName("pip_btn");
         btn_pip[0].remove();
 
         let pipWindow = await documentPictureInPicture.requestWindow({
-            width: 400,
-            height: 320
+            width: 350,
+            height: 480,
         });
 
         let css = document.getElementsByTagName("style");
@@ -367,162 +408,201 @@
             pipWindow.document.head.appendChild(clone);
         }
 
+        pipWindow.document.body.appendChild(parameter_clone);
+        pipWindow.document.body.appendChild(box_clone);
+
         let scripts = document.scripts
         for(let element of scripts){
             let newScript = document.createElement("script");
             newScript.innerHTML = element.innerHTML;
             pipWindow.document.body.appendChild(newScript);
         }
-
-        pipWindow.document.body.appendChild(parameter_clone);
-        pipWindow.document.body.appendChild(box_clone);
-
-
-
     }
 
-    async function que_pip()
+    function _doTick()
     {
-        if(documentPictureInPicture.window) documentPictureInPicture.window.close();
-        let box = document.getElementById("timer_questionnaire");
-        let box_clone = await box.cloneNode(true);
+        let remTime_local = (targetTime - Date.now()) / 1000;
+        let elapsedTime = (Date.now() - startTime) / 1000;
 
-        let parameter_element = document.getElementById("parameter_box");
-        let parameter_clone = await parameter_element.cloneNode(true);
+        document.getElementById("phase_display").innerHTML = `Aktuelle Phase: ${t_state === 1 ? "Präsentation" : t_state === 2 ? "Wartezeit" : t_state === 3 ? "Fachgespräch" : "Pausiert"}`;
 
-        parameter_clone.getElementsByTagName("div").param_pre.remove()
+        if(t_state === 0) return;
 
-        let btn_pip = box_clone.getElementsByClassName("pip_btn");
-        btn_pip[0].remove();
-
-        let pipWindow = await documentPictureInPicture.requestWindow({
-            width: 400,
-            height: 320
-        });
-
-        let css = document.getElementsByTagName("style");
-        for(let element of css){
-            let clone = element.cloneNode(true);
-            pipWindow.document.head.appendChild(clone);
+        if (elapsedTime > (time_presentation * 60) && t_state === 1) {
+            // Switch to wait time phase
+            t_state++;
+            waitTargetTime = Date.now() + (waitTime * 1000);
+            timerBox.classList.remove("yellow");
+            timerBox.classList.add("waiting");
+            duration_presentation = time_presentation * 60 * 1000;
+            document.getElementById("time_presentation").innerHTML = "Dauer Präsentation: " + time_presentation + " min.";
+            document.getElementById("btn_skip").innerText = "Wartezeit überspringen";
         }
 
-        let scripts = document.scripts
-        for(let element of scripts){
-            let newScript = document.createElement("script");
-            newScript.innerHTML = element.innerHTML;
-            pipWindow.document.body.appendChild(newScript);
+        if(t_state === 2) {
+            elapsedWaitTime = (waitTargetTime - Date.now()) / 1000;
+            if(elapsedWaitTime > 0) {
+                let elap_minutes = parseInt(elapsedWaitTime / 60);
+                let elap_seconds = parseInt(elapsedWaitTime % 60);
+                document.getElementById('timer_presentation_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
+                return;
+            }
+            else {
+                // Switch to questionnaire phase
+                t_state++;
+                targetTime = Date.now() + (time_questionnaire * 60 * 1000);
+                remTime_local = (targetTime - Date.now()) / 1000;
+                timerBox.classList.remove("waiting");
+                document.getElementById("btn_skip").innerText = "Fachgespräch beenden";
+            }
         }
 
-        pipWindow.document.body.appendChild(parameter_clone);
-        pipWindow.document.body.appendChild(box_clone);
-
-    }
-
-    function togglePresentation() {
-        if(!t_pre){
-            let minutes = document.getElementById("time_presentation").value;
-
-            let box = document.getElementById("timer_presentation");
-            box.classList.remove("green");
-            box.classList.remove("yellow");
-            box.classList.remove("red");
-            box.classList.add("green");
-
-            const startTime = Date.now();
-            const targetTime = startTime + (minutes * 60 * 1000); // Convert seconds to milliseconds
-
-            interval_pre = setInterval(function() {
-                let elapsedTime = (targetTime - Date.now()) / 1000;
-                if (elapsedTime > 0) {
-                    let elap_minutes = parseInt(elapsedTime / 60);
-                    let elap_seconds = parseInt(elapsedTime % 60);
-                    document.getElementById('timer_presentation_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
-                } else {
-                    clearInterval(interval_pre);
-                    t_pre = false;
-
-                    box.classList.remove("yellow");
-                    box.classList.remove("green");
-                    box.classList.add("red");
-
-                    document.getElementById("btn_pre").innerText = "Start";
-                    document.getElementById('timer_presentation_minutes').textContent = "00:00";
-                    console.log("Countdown finished!");
-                    return;
-                }
-
-                let timer_percent = (elapsedTime/60) / minutes;
-                if(timer_percent < blinkstart)
-                {
-                    if(box.classList.contains("green")) box.classList.remove("green");
-                    if(!box.classList.contains("yellow")) box.classList.add("yellow");
-                }
-
-            }, 100);
-
-            t_pre = true;
-            document.getElementById("btn_pre").innerText = "Stop";
-        }
-        else
-        {
+        if (remTime_local > 0) {
+            let elap_minutes = parseInt(remTime_local / 60);
+            let elap_seconds = parseInt(remTime_local % 60);
+            document.getElementById('timer_presentation_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
+        } else {
             clearInterval(interval_pre);
+
+            timerBox.classList.remove("yellow");
+            timerBox.classList.remove("green");
+            timerBox.classList.add("red");
+
             document.getElementById("btn_pre").innerText = "Start";
-            t_pre = false;
+            document.getElementById('timer_presentation_minutes').textContent = "00:00";
+            console.log("Countdown finished!");
+            document.getElementById("btn_skip").disabled = true;
+            t_state++;
+            return;
+        }
+
+        if(t_state === 1 || t_state === 3) {
+            let timer_percent;
+            if(t_state === 1) timer_percent = ((remTime_local/60)-time_questionnaire)/time_presentation;
+            else if(t_state === 3) timer_percent = ((remTime_local/60) - (duration_presentation))/time_questionnaire;
+
+            if (timer_percent < blinkstart) {
+                if (timerBox.classList.contains("green")) timerBox.classList.remove("green");
+                if (!timerBox.classList.contains("yellow")) timerBox.classList.add("yellow");
+            }
+            else{
+                if (timerBox.classList.contains("yellow")) timerBox.classList.remove("yellow");
+                if (!timerBox.classList.contains("green")) timerBox.classList.add("green");
+            }
+        }
+
+    }
+
+    function startTimer() {
+        if (t_state === -1 || t_state === 4) {
+
+            document.getElementById('btn_skip').innerText = 'Präsentation beenden';
+
+            time_presentation = parseFloat(document.getElementById("time_presentation").value);
+            time_questionnaire = parseFloat(document.getElementById("time_questionnaire").value);
+
+            examDuration = time_presentation + time_questionnaire;
+
+            timerBox.classList.remove("green");
+            timerBox.classList.remove("yellow");
+            timerBox.classList.remove("red");
+            timerBox.classList.add("green");
+
+            startTime = Date.now();
+            targetTime = startTime + (examDuration * 60 * 1000); // Convert seconds to milliseconds
+
+            t_state = 1;
+            interval_pre = setInterval(_doTick, 100);
+
+            document.getElementById("btn_skip").disabled = false;
+            skipped = false
+
+            document.getElementById("btn_pre").innerText = "Pausieren";
+            return;
+        }
+        if(t_state === 0) {
+            // Resume from pause
+            targetTime = Date.now() + remainingTime;
+            t_state = lastState;
+            document.getElementById("btn_pre").innerText = "Pausieren";
+            document.getElementById("btn_skip").innerText = t_state === 1 ? "Präsentation beenden" : t_state === 2 ? "Wartezeit überspringen" : "Fachgespräch beenden";
+            return;
+        }
+        else {
+            // Pause timer
+            lastState = t_state;
+            t_state = 0;
+            remainingTime = targetTime - Date.now();
+            document.getElementById("btn_pre").innerText = "Fortsetzen";
+            document.getElementById("btn_skip").innerText = "Timer zurücksetzen";
         }
     }
 
-    function toggleQuestionnaire() {
-        if(!t_que){
-            let minutes = document.getElementById("time_questionnaire").value;
+    function skip_presentation() {
+        if(t_state === 1) {
+            // Skip to questinnaire
+            duration_presentation = (Date.now() - startTime) / 1000;
 
-            let box = document.getElementById("timer_questionnaire");
-            box.classList.remove("green");
-            box.classList.remove("yellow");
-            box.classList.remove("red");
-            box.classList.add("green");
+            if (!confirm('Präsentation beenden?')) return;
+            t_state = 2;
+            waitTargetTime = Date.now() + (waitTime * 1000);
+            timerBox.classList.add("waiting");
+            skipped = true;
 
-            const startTime = Date.now();
-            const targetTime = startTime + (minutes * 60 * 1000); // Convert seconds to milliseconds
+            time_questionnaire += ((time_presentation * 60 * 1000) - (duration_presentation * 1000)) / (60 * 1000);
 
-
-            interval_que = setInterval(function() {
-                let elapsedTime = (targetTime - Date.now()) / 1000;
-                if (elapsedTime > 0) {
-                    let elap_minutes = parseInt(elapsedTime / 60);
-                    let elap_seconds = parseInt(elapsedTime % 60);
-                    document.getElementById('timer_questionnaire_minutes').textContent = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`;
-                } else {
-                    clearInterval(interval_que);
-                    t_que = false;
-
-                    box.classList.remove("yellow");
-                    box.classList.remove("green");
-                    box.classList.add("red");
-
-                    document.getElementById("btn_que").innerText = "Start";
-                    document.getElementById('timer_questionnaire_minutes').textContent = "00:00";
-                    console.log("Countdown finished!");
-                    return;
-                }
-
-                let timer_percent = (elapsedTime/60) / minutes;
-                if(timer_percent < blinkstart)
-                {
-                    if(box.classList.contains("green")) box.classList.remove("green");
-                    if(!box.classList.contains("yellow")) box.classList.add("yellow");
-                }
-
-            }, 100);
-
-            t_que = true;
-            document.getElementById("btn_que").innerText = "Stop";
+            let elap_minutes = parseInt(duration_presentation / 60);
+            let elap_seconds = parseInt(duration_presentation % 60);
+            document.getElementById("presentation_duration").innerText = "Dauer Präsentation: " + `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}` + " min.";
+            document.getElementById("presentation_duration").classList.remove("hidden");
+            document.getElementById('btn_skip').innerText = "Pause überspringen";
         }
-        else
-        {
-            clearInterval(interval_que);
-            document.getElementById("btn_que").innerText = "Start";
-            t_que = false;
+        else if(t_state === 2) {
+            // Skip wait time
+            lastState = t_state;
+            t_state = 3;
+            targetTime = Date.now() + (time_questionnaire * 60 * 1000);
+            elapsedTime = (targetTime - Date.now()) / 1000;
+            timerBox.classList.remove("waiting");
+            document.getElementById('btn_skip').innerText = "Fachgespräch beenden";
         }
+        else if(t_state === 3) {
+            // End questionnaire
+            if (!confirm('Fachgespärch beenden?')) return;
+            clearInterval(interval_pre);
+
+            timerBox.classList.remove("yellow");
+            timerBox.classList.remove("green");
+            timerBox.classList.add("red");
+
+            document.getElementById("btn_pre").innerText = "Timer neustarten";
+            document.getElementById("btn_skip").innerText  = "Timer zurücksetzen";
+
+            t_state++;
+        }
+        else if(t_state === 0 || t_state === 4) {
+            reset_timer()
+        }
+
+        document.getElementById("phase_display").innerHTML = `Aktuelle Phase: ${t_state === 1 ? "Präsentation" : t_state === 2 ? "Wartezeit" : t_state === 3 ? "Fachgespräch" : "Prüfung beendet"}`;
+    }
+
+    function reset_timer() {
+        if (!confirm('Timer zurücksetzen?')) return;
+
+        clearInterval(interval_pre);
+
+        timerBox.classList.remove("yellow");
+        timerBox.classList.remove("green");
+        timerBox.classList.remove("red");
+
+        document.getElementById('timer_presentation_minutes').textContent = "--:--";
+        document.getElementById("phase_display").innerHTML = `Aktuelle Phase: Vor Beginn der Prüfung`;
+        document.getElementById("btn_pre").innerText = "Start";
+        document.getElementById("btn_skip").disabled = true;
+        document.getElementById("presentation_duration").classList.add("hidden");
+
+        t_state = -1;
     }
 </script>
 </body>

@@ -1,0 +1,617 @@
+<!doctype html>
+<html lang="de">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Prüfungsprotokoll – Mündliche Prüfung (Wort-/Inhaltsprotokoll)</title>
+    <style>
+        :root {
+            --text:#111;
+            --muted:#555;
+            --line:#d6d6d6;
+            --bg:#fff;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; font: 14px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); background: #f5f5f5; }
+        header, main, footer { max-width: 980px; margin: 0 auto; padding: 18px 16px; }
+        header { background: var(--bg); margin-top: 16px; border: 1px solid var(--line); border-bottom: none; border-radius: 10px 10px 0 0; }
+        main { background: var(--bg); border: 1px solid var(--line); border-top: none; border-bottom: none; padding-top: 0; }
+        footer { background: var(--bg); border: 1px solid var(--line); border-top: none; border-radius: 0 0 10px 10px; margin-bottom: 16px; }
+
+        h1 { margin: 0 0 6px 0; font-size: 20px; }
+        .sub { color: var(--muted); margin: 0; }
+
+        .toolbar { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+        button {
+            border: 1px solid var(--line);
+            background: #fff;
+            padding: 8px 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        button:hover { background: #fafafa; }
+        .hint { color: var(--muted); font-size: 12px; margin-top: 10px; }
+
+        section { padding: 18px 0; border-top: 1px solid var(--line); }
+        section:first-of-type { border-top: none; }
+        h2 { margin: 0 0 10px 0; font-size: 16px; }
+
+        .grid { display: grid; grid-template-columns: 220px 1fr; gap: 10px 14px; align-items: center; }
+        label { font-weight: 700; }
+        input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea, select {
+            width: 100%;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 8px 10px;
+            background: #fff;
+            font: inherit;
+        }
+
+        input:invalid{
+            background: tomato;
+        }
+
+        textarea { min-height: 96px; resize: vertical; }
+
+        .pill {
+            display: inline-block;
+            font-size: 12px;
+            padding: 2px 8px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            color: var(--muted);
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        .box {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            background: #fff;
+            margin: 12px 0 0 0;
+        }
+
+        .chain {
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 12px 0;
+            background: #fff;
+        }
+        .chain-head {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        .chain-title { flex: 1 1 420px; min-width: 260px; }
+        .chain-meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .small { font-size: 12px; color: var(--muted); }
+
+        .qa {
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .qa-title {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            align-items: center;
+            margin: 0 0 8px 0;
+            flex-wrap: wrap;
+        }
+        .qa-title-left { display: flex; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+        .qa-title-left h4 { margin: 0; font-size: 13px; }
+        .qa-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+        .row {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 8px 12px;
+            margin-bottom: 10px;
+            align-items: start;
+        }
+        .row:last-child { margin-bottom: 0; }
+
+        .inline { display: inline-flex; gap: 8px; align-items: center; font-weight: 600; }
+        .inline input[type="checkbox"] { transform: translateY(1px); }
+
+        .expected { display: none; margin-top: 10px; }
+        .actions { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+        .io {
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 12px;
+            background: #fff;
+            display: none;
+        }
+        .io textarea { min-height: 160px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
+        .io .io-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+
+        @media print {
+            body { background: #fff; }
+            header, main, footer { max-width: none; margin: 0; border: none; border-radius: 0; padding: 0; }
+            .toolbar, .hint, .actions, .no-print, .io { display: none !important; }
+
+            input, textarea, select { border: none; padding: 0; border-radius: 0; outline: none; }
+            textarea { min-height: auto; }
+            section, .chain, .qa, .box { page-break-inside: avoid; }
+            .qa { border: 1px solid #999; }
+            .grid { grid-template-columns: 200px 1fr; }
+            @page { margin: 14mm; }
+
+            select.status { -webkit-appearance: none; appearance: none; background: transparent; }
+
+            /* Erwartete Antwort nur drucken, wenn sichtbar */
+            .expected { display: block !important; }
+            .expected[data-visible="false"] { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Prüfungsprotokoll – Mündliche Prüfung <span class="pill">Wort-/Inhaltsprotokoll</span></h1>
+    <p class="sub no-print">JSON speichert Vorbereitung inkl. erwarteter Antworten. Antworten/Status/Zeiten werden nicht gespeichert, sind aber im PDF sichtbar.</p>
+
+    <div class="toolbar no-print">
+        <button type="button" id="btnPrint">Als PDF exportieren</button>
+        <button type="button" id="btnAddChain">Fragenkette hinzufügen</button>
+        <button type="button" id="btnToggleIO">Vorbereitung (JSON) Export/Import</button>
+        <button type="button" id="btnClear">Alles leeren</button>
+        <button type="button" id="btnHome" onclick="location.href='../index.html'">Zur Startseite</button>
+    </div>
+    <div class="hint no-print">
+        PDF-Export: Button → Druckdialog → Ziel „Als PDF speichern“.<br />
+        JSON-Export/Import speichert keine Antworten/Status/Zeiten.
+    </div>
+
+    <div class="io no-print" id="ioBox">
+        <h2 style="margin-top:0;">Vorbereitung als JSON</h2>
+        <div class="small">
+            Export enthält: Prüfungsdaten, Ketten-Themen, Fragen, erwartete Antworten (falls erfasst).<br/>
+            Export enthält nicht: Antworten, Status, Startzeiten/Dauern.
+        </div>
+        <textarea id="ioText" placeholder='Hier JSON einfügen (Import) oder Export-JSON erscheint hier.'></textarea>
+        <div class="small">
+            Dieses Feld unterstützt Drag & Drop von JSON-Dateien zum Importieren.
+        </div>
+        <div class="io-actions">
+            <button type="button" id="btnExportJSON">Export JSON (Vorbereitung)</button>
+            <button type="button" id="btnImportJSON">Import JSON (Vorbereitung laden)</button>
+            <button type="button" id="btnDownloadJSON">JSON herunterladen</button>
+            <button type="button" id="btnCopyJSON">JSON kopieren</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <section>
+        <h2>Angaben zur Prüfung</h2>
+        <div class="grid">
+            <label for="date">Prüfungsdatum</label>
+            <input id="date" type="date" />
+
+            <label for="candidate">Prüfling (Name)</label>
+            <input id="candidate" type="text" placeholder="Vorname Nachname" />
+
+            <label for="profession">Ausbildungsberuf</label>
+            <input id="profession" type="text" placeholder="z. B. Fachinformatiker/in" list="prof"/>
+            <datalist id="prof">
+                <option>Fachinformatiker/in</option>
+            </datalist>
+
+
+            <label for="specialty">Fachrichtung</label>
+            <input id="specialty" type="text" placeholder="z. B. Anwendungsentwicklung / Systemintegration" list="specs" />
+            <datalist id="specs">
+                <option>Systemintegration</option>
+                <option>Anwendungsentwicklung</option>
+            </datalist>
+
+            <label for="committee">Prüfungsausschuss (Namen)</label>
+            <input id="committee" type="text" placeholder="z. B. Mustermann, Musterfrau, …" />
+        </div>
+
+        <!-- Non-storable but PDF-visible time boxes -->
+        <div class="box">
+            <h2 style="margin:0 0 10px 0;">Prüfungszeiten</h2>
+            <div class="grid" style="grid-template-columns: 220px 1fr;">
+                <label for="p1Start">Beginn Präsentation</label>
+                <input id="p1Start" type="time" />
+
+                <label for="p1Dur">Dauer der Präsentation</label>
+                <input id="p1Dur" type="text" placeholder="z. B. 15:00" title="Beispiel: 15:00, 15.00, 1:00" />
+
+                <label for="p2Start">Beginn des Fachgespräches</label>
+                <input id="p2Start" type="time" />
+
+                <label for="p2Dur">Dauer des Fachgespräches</label>
+                <input id="p2Dur" type="text" placeholder="z. B. 15:00" />
+            </div>
+            <div class="small no-print" style="margin-top:8px;">
+                Diese Felder werden beim JSON-Export nicht gespeichert.
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2>Präsentation des Prüflings</h2>
+        <textarea id="presentation" placeholder="- Bewertungen und Anmerkungen zur Präsentation"></textarea>
+    </section>
+
+    <section>
+        <h2>Fachgespräch – Frageketten</h2>
+        <div id="chains"></div>
+
+        <div class="actions no-print">
+            <button type="button" id="btnAddChain2">Weitere Fragenkette</button>
+        </div>
+    </section>
+
+    <section>
+        <h2>Sonstiges</h2>
+        <textarea id="other" placeholder="- Auffälligkeiten, Störungen im Prüfungsablauf, besondere Vorkommnisse"></textarea>
+    </section>
+</main>
+
+<footer>
+    <section style="border-top:none; padding-top: 0;">
+        <h2>Abschluss</h2>
+        <div class="grid">
+            <label for="scribe">Protokollführende/r</label>
+            <input id="scribe" type="text" placeholder="Name" />
+
+            <label for="signDate">Datum</label>
+            <input id="signDate" type="date" />
+        </div>
+    </section>
+
+    <div class="box small no-print">
+        Diese Webseite ist vollständig eigenständig (es werden keine externen JavaScript- oder CSS-Dateien geladen).
+        Die auf dieser Seite eingegebenen Informationen verlassen Ihren Computer NICHT.
+        Für zusätzliche Sicherheit können Sie diese Seite auf Ihrem Computer speichern oder Ihre eigene Kopie von <a href="https://github.com/k3op/ihk">https://github.com/k3op/ihk</a> abrufen.
+        Diese Tools sind Open Source und verfügbar auf <a href="https://github.com/k3op/ihk">GitHub</a>. Lizenziert unter <a href="../LICENSE">GNU GPL v3</a>.
+    </div>
+</footer>
+</body>
+<script>
+    const chainsEl = document.getElementById('chains');
+
+    function statusSelectHTML() {
+        return `
+      <select class="status" aria-label="Status">
+        <option value="">Status (optional)</option>
+        <option>Richtig</option>
+        <option>Teilweise richtig</option>
+        <option>Falsch</option>
+        <option>Mit Hilfestellung</option>
+        <option>Offen</option>
+      </select>
+    `;
+    }
+
+    function createQAItem(chainEl, qaIndex, presetQuestionText = '', presetExpectedText = '') {
+        const qa = document.createElement('div');
+        qa.className = 'qa';
+
+        const title = document.createElement('div');
+        title.className = 'qa-title';
+        title.innerHTML = `
+      <div class="qa-title-left">
+        <h4>Frage/Antwort ${qaIndex}</h4>
+      </div>
+      <div class="qa-controls">
+        ${statusSelectHTML()}
+        <label class="inline no-print" title="Blendet ein Feld für eine erwartete Antwort ein (optional).">
+          <input type="checkbox" class="toggle-expected" />
+          Erwartete Antwort anzeigen
+        </label>
+        <button type="button" class="btnRemoveQA no-print">Entfernen</button>
+      </div>
+    `;
+        qa.appendChild(title);
+
+        const qRow = document.createElement('div');
+        qRow.className = 'row';
+        qRow.innerHTML = `
+      <label>Frage</label>
+      <textarea class="qtext" placeholder="Wortnah oder sinngemäß: gestellte Frage(n)"></textarea>
+    `;
+        qa.appendChild(qRow);
+
+        const aRow = document.createElement('div');
+        aRow.className = 'row';
+        aRow.innerHTML = `
+      <label>Antwort</label>
+      <textarea class="atext" placeholder="Inhaltliche Wiedergabe der Antwort (ohne Bewertung)"></textarea>
+    `;
+        qa.appendChild(aRow);
+
+        const expected = document.createElement('div');
+        expected.className = 'expected';
+        expected.dataset.visible = "false";
+        expected.innerHTML = `
+      <div class="row">
+        <label>Erwartet</label>
+        <textarea class="etext" placeholder="Optional: erwartete/ideale Antwort (für Vorbereitung, keine Bewertung)."></textarea>
+      </div>
+    `;
+        qa.appendChild(expected);
+
+        // Apply presets
+        qa.querySelector('.qtext').value = presetQuestionText || '';
+
+        const expectedText = presetExpectedText || '';
+        const toggle = qa.querySelector('.toggle-expected');
+        if (expectedText.trim().length > 0) {
+            // show expected on load if it exists
+            toggle.checked = true;
+            expected.style.display = 'block';
+            expected.dataset.visible = "true";
+            expected.querySelector('.etext').value = expectedText;
+        }
+
+        // Events
+        qa.querySelector('.btnRemoveQA').addEventListener('click', () => {
+            qa.remove();
+            renumberChain(chainEl);
+        });
+
+        toggle.addEventListener('change', (e) => {
+            const on = e.target.checked;
+            expected.style.display = on ? 'block' : 'none';
+            expected.dataset.visible = on ? "true" : "false";
+            if (!on) expected.querySelector('.etext').value = '';
+        });
+
+        return qa;
+    }
+
+    function renumberChain(chainEl) {
+        const qas = chainEl.querySelectorAll('.qa');
+        qas.forEach((qa, i) => {
+            const h4 = qa.querySelector('h4');
+            if (h4) h4.textContent = `Frage/Antwort ${i + 1}`;
+        });
+    }
+
+    function createChain(chainIndex, presetTitle = '', presetItems = []) {
+        const chain = document.createElement('div');
+        chain.className = 'chain';
+
+        const head = document.createElement('div');
+        head.className = 'chain-head';
+        head.innerHTML = `
+      <div class="chain-title">
+        <label style="display:block; margin-bottom:6px;">Ketten-Thema (optional)</label>
+        <input class="ctitle" type="text" placeholder="z. B. Datenbank-Design, Netzwerksicherheit, Wirtschaftlichkeit …" />
+        <div class="small">Eine Fragenkette gruppiert zusammenhängende Rückfragen zu einem Thema.</div>
+      </div>
+      <div class="chain-meta no-print">
+        <button type="button" class="btnAddQA">Frage/Antwort hinzufügen</button>
+        <button type="button" class="btnRemoveChain">Kette entfernen</button>
+      </div>
+    `;
+        chain.appendChild(head);
+
+        const qaContainer = document.createElement('div');
+        qaContainer.className = 'qa-container';
+        chain.appendChild(qaContainer);
+
+        chain.querySelector('.ctitle').value = presetTitle || '';
+
+        if (Array.isArray(presetItems) && presetItems.length > 0) {
+            presetItems.forEach((item, idx) => {
+                qaContainer.appendChild(createQAItem(chain, idx + 1, item.question || '', item.expected || ''));
+            });
+        } else {
+            qaContainer.appendChild(createQAItem(chain, 1, '', ''));
+        }
+
+        head.querySelector('.btnAddQA').addEventListener('click', () => {
+            const next = qaContainer.querySelectorAll('.qa').length + 1;
+            qaContainer.appendChild(createQAItem(chain, next, '', ''));
+        });
+        head.querySelector('.btnRemoveChain').addEventListener('click', () => chain.remove());
+
+        return chain;
+    }
+
+    function addChain(presetTitle = '', presetItems = []) {
+        const nextIndex = chainsEl.querySelectorAll('.chain').length + 1;
+        chainsEl.appendChild(createChain(nextIndex, presetTitle, presetItems));
+    }
+
+    function validateDuration(element)
+    {
+        if(element.target.value === '') input.setCustomValidity("");
+        else if(!/^\d{1,2}[\:\.]{1}\d{2}$/.test(element.target.value))
+        {
+            element.target.setCustomValidity("Bitte im Format MM:SS M:SS eingeben. Beispiel: 15:00 oder 1:30");
+            element.target.reportValidity();
+            element.target.focus();
+        }
+        else element.target.setCustomValidity("");
+    }
+
+    // Initial chain
+    addChain();
+
+    document.getElementById('btnAddChain').addEventListener('click', () => addChain());
+    document.getElementById('btnAddChain2').addEventListener('click', () => addChain());
+
+    document.getElementById('btnPrint').addEventListener('click', () => window.print());
+
+    document.getElementById('btnClear').addEventListener('click', () => {
+        if (!confirm('Wirklich alle Felder leeren?')) return;
+        document.querySelectorAll('input[type="text"], input[type="date"], input[type="time"], input[type="number"], textarea, select').forEach(el => el.value = '');
+        document.querySelectorAll('.expected .etext').forEach(el => el.value = '');
+        chainsEl.innerHTML = '';
+        addChain();
+    });
+
+    // --- JSON Preparation Export/Import ---
+    const ioBox = document.getElementById('ioBox');
+    const ioText = document.getElementById('ioText');
+
+    /**
+     * Zeigt/Versteckt die IO-Box
+     * @param action 0 = verstecken, 1 = zeigen, 2 = umschalten
+     */
+    function changeIOBox(action) {
+        if (action === 0) ioBox.style.display = 'none';
+        else if (action === 1) ioBox.style.display = 'block';
+        else if (action === 2) ioBox.style.display = (ioBox.style.display === 'block') ? 'none' : 'block';
+    }
+
+    document.getElementById('btnToggleIO').addEventListener('click', () => {
+        ioText.value = '';
+        changeIOBox(2);
+    });
+
+    function buildPreparationJSON() {
+        // IMPORTANT: includes expected answers, excludes answers/status/times
+        const data = {
+            schema: "ihk-protokoll-prep-v2",
+            meta: {
+                date: document.getElementById('date').value || "",
+                candidate: document.getElementById('candidate').value || "",
+                profession: document.getElementById('profession').value || "",
+                specialty: document.getElementById('specialty').value || "",
+                committee: document.getElementById('committee').value || ""
+            },
+            presentation: document.getElementById('presentation').value || "",
+            chains: [],
+            other: document.getElementById('other').value || "",
+            scribe: document.getElementById('scribe').value || "",
+            signDate: document.getElementById('signDate').value || ""
+        };
+
+        [...chainsEl.querySelectorAll('.chain')].forEach(chain => {
+            const title = chain.querySelector('.ctitle')?.value || "";
+            const items = [...chain.querySelectorAll('.qa')].map(qa => {
+                const q = qa.querySelector('.qtext')?.value || "";
+                // expected is storable (preparation)
+                const expectedBox = qa.querySelector('.expected');
+                const expectedVisible = expectedBox?.dataset.visible === "true";
+                const expectedText = expectedVisible ? (qa.querySelector('.etext')?.value || "") : "";
+                return { question: q, expected: expectedText };
+            });
+            data.chains.push({ title, items });
+        });
+
+        return data;
+    }
+
+    function applyPreparationJSON(data) {
+        if (!data || (data.schema !== "ihk-protokoll-prep-v2" && data.schema !== "ihk-protokoll-prep-v1")) {
+            throw new Error("Unbekanntes JSON-Format. Erwartet: ihk-protokoll-prep-v2");
+        }
+
+        document.getElementById('date').value = data.meta?.date || "";
+        document.getElementById('candidate').value = data.meta?.candidate || "";
+        document.getElementById('profession').value = data.meta?.profession || "";
+        document.getElementById('specialty').value = data.meta?.specialty || "";
+        document.getElementById('committee').value = data.meta?.committee || "";
+
+        document.getElementById('presentation').value = data.presentation || "";
+        document.getElementById('other').value = data.other || "";
+        document.getElementById('scribe').value = data.scribe || "";
+        document.getElementById('signDate').value = data.signDate || "";
+
+        // Times are intentionally not imported
+        document.getElementById('p1Start').value = "";
+        document.getElementById('p1Dur').value = "";
+        document.getElementById('p2Start').value = "";
+        document.getElementById('p2Dur').value = "";
+
+        // rebuild chains
+        chainsEl.innerHTML = "";
+
+        if (data.schema === "ihk-protokoll-prep-v1") {
+            // v1 compatibility: only questions array
+            (data.chains || []).forEach(ch => addChain(ch.title || "", (ch.questions || []).map(q => ({ question: q, expected: "" }))));
+        } else {
+            (data.chains || []).forEach(ch => addChain(ch.title || "", ch.items || []));
+        }
+        if ((data.chains || []).length === 0) addChain();
+
+        // Security: ensure non-storable fields are cleared
+        document.querySelectorAll('.qa .atext').forEach(el => el.value = '');
+        document.querySelectorAll('select.status').forEach(el => el.value = '');
+    }
+
+    document.getElementById('btnExportJSON').addEventListener('click', () => {
+        const data = buildPreparationJSON();
+        ioText.value = JSON.stringify(data, null, 2);
+    });
+
+    document.getElementById('btnImportJSON').addEventListener('click', () => {
+        const raw = ioText.value.trim();
+        if (!raw) return alert("Bitte JSON einfügen.");
+        try {
+            const data = JSON.parse(raw);
+            applyPreparationJSON(data);
+            changeIOBox(0);
+        } catch (e) {
+            alert(`Import fehlgeschlagen:  ${e.message}\n\nBitte anonymisieren Sie die Daten und wenden sich an den Entwickler.`);
+        }
+    });
+
+    document.getElementById('btnCopyJSON').addEventListener('click', async () => {
+        const txt = ioText.value;
+        if (!txt) return alert("Kein JSON im Feld.");
+        try {
+            await navigator.clipboard.writeText(txt);
+            alert("JSON kopiert.");
+        } catch {
+            alert("Kopieren nicht möglich. Markiere den Text manuell und kopiere ihn.");
+        }
+    });
+
+    document.getElementById('btnDownloadJSON').addEventListener('click', () => {
+        const txt = ioText.value.trim();
+        if (!txt) return alert("Kein JSON im Feld.");
+        const blob = new Blob([txt], { type: "application/json" });
+        const a = document.createElement('a');
+        const dt = new Date();
+        const y = dt.getFullYear();
+        const m = String(dt.getMonth() + 1).padStart(2, '0');
+        const d = String(dt.getDate()).padStart(2, '0');
+        a.href = URL.createObjectURL(blob);
+
+        let candidate = document.getElementById('candidate').value.trim().replace(' ', '_');
+        if(candidate) a.download = `protokoll_vorbereitung-${candidate}-${y}_${m}_${d}.json`;
+        else a.download = `protokoll_vorbereitung_${y}-${m}-${d}.json`;
+
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(a.href);
+    });
+
+    document.getElementById('p1Dur').addEventListener('input', (element) => { validateDuration(element); });
+    document.getElementById('p2Dur').addEventListener('input', (element) => { validateDuration(element); });
+
+    document.getElementById('ioText').addEventListener('drop' , (event) => {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        if (files.length === 0) return;
+        const file = files[0];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            ioText.value = e.target.result;
+        };
+        reader.readAsText(file);
+    });
+</script>
+
+</html>

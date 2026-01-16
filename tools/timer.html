@@ -425,7 +425,6 @@
         let elapsedTime = (Date.now() - startTime) / 1000;
 
         document.getElementById("phase_display").innerHTML = `Aktuelle Phase: ${t_state === 1 ? "Präsentation" : t_state === 2 ? "Wartezeit" : t_state === 3 ? "Fachgespräch" : "Pausiert"}`;
-
         if(t_state === 0) return;
 
         if (elapsedTime > (time_presentation * 60) && t_state === 1) {
@@ -479,7 +478,7 @@
         if(t_state === 1 || t_state === 3) {
             let timer_percent;
             if(t_state === 1) timer_percent = ((remTime_local/60)-time_questionnaire)/time_presentation;
-            else if(t_state === 3) timer_percent = ((remTime_local/60) - (duration_presentation))/time_questionnaire;
+            else if(t_state === 3) timer_percent = (remTime_local/60)/time_questionnaire;
 
             if (timer_percent < blinkstart) {
                 if (timerBox.classList.contains("green")) timerBox.classList.remove("green");
@@ -497,6 +496,8 @@
         if (t_state === -1 || t_state === 4) {
 
             document.getElementById('btn_skip').innerText = 'Präsentation beenden';
+
+            if(!document.getElementById('presentation_duration').classList.contains('hidden')) document.getElementById("presentation_duration").classList.add("hidden");
 
             time_presentation = parseFloat(document.getElementById("time_presentation").value);
             time_questionnaire = parseFloat(document.getElementById("time_questionnaire").value);

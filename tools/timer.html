@@ -352,6 +352,10 @@
         Die auf dieser Seite eingegebenen Informationen verlassen Ihren Computer NICHT.
         Für zusätzliche Sicherheit können Sie diese Seite auf Ihrem Computer speichern oder Ihre eigene Kopie von
         <a href="https://github.com/k3op/ihk">https://github.com/k3op/ihk</a> abrufen.
+        <br><br>
+
+        <input type="checkbox" id="showWarnings" checked="true"/>
+        <label for="showWarnings">Warnungen anzeigen?</label>
     </div>
 </footer>
 <script>
@@ -546,7 +550,8 @@
             // Skip to questinnaire
             duration_presentation = (Date.now() - startTime) / 1000;
 
-            if (!confirm('Präsentation beenden?')) return;
+
+            if (document.getElementById("showWarnings").checked && !confirm('Präsentation beenden?')) return;
             t_state = 2;
             waitTargetTime = Date.now() + (waitTime * 1000);
             timerBox.classList.add("waiting");
@@ -573,7 +578,7 @@
         }
         else if(t_state === 3) {
             // End questionnaire
-            if (!confirm('Fachgespärch beenden?')) return;
+            if (document.getElementById("showWarnings").checked && !confirm('Fachgespärch beenden?')) return;
             clearInterval(interval_pre);
 
             timerBox.classList.remove("yellow");
@@ -593,7 +598,7 @@
     }
 
     function reset_timer() {
-        if (!confirm('Timer zurücksetzen?')) return;
+        if (document.getElementById("showWarnings").checked && !confirm('Timer zurücksetzen?')) return;
 
         clearInterval(interval_pre);
 

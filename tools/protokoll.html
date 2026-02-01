@@ -233,6 +233,7 @@
             <div class="small no-print" style="margin-top:8px;">
                 Diese Felder werden beim JSON-Export nicht gespeichert.
             </div>
+            <button class="no-print" onclick="loadTimer()">Zeit aus Timer übernehmen</button>
         </div>
     </section>
 
@@ -511,6 +512,22 @@
         return data;
     }
 
+    function loadTimer()
+    {
+        let start = sessionStorage.getItem("start_time")
+        let duration = sessionStorage.getItem("duration_presentation")
+
+        if (duration != null && start != null) {
+            let date = new Date();
+            date.setTime(start);
+            document.getElementById("p1Start").value = `${date.getHours()}:${date.getMinutes()}`;
+            document.getElementById('p1Dur').value   = duration;
+        }
+        else{
+            alert("Zeit konnte nicht geladen werden.")
+        }
+    }
+
     function applyPreparationJSON(data) {
         if (!data || (data.schema !== "ihk-protokoll-prep-v2" && data.schema !== "ihk-protokoll-prep-v1")) {
             throw new Error("Unbekanntes JSON-Format. Erwartet: ihk-protokoll-prep-v2");
@@ -530,8 +547,6 @@
         // Times are intentionally not imported
         document.getElementById('p1Start').value = "";
         document.getElementById('p1Dur').value = "";
-        document.getElementById('p2Start').value = "";
-        document.getElementById('p2Dur').value = "";
 
         // rebuild chains
         chainsEl.innerHTML = "";
@@ -599,7 +614,6 @@
     });
 
     document.getElementById('p1Dur').addEventListener('input', (element) => { validateDuration(element); });
-    document.getElementById('p2Dur').addEventListener('input', (element) => { validateDuration(element); });
 
     document.getElementById('ioText').addEventListener('drop' , (event) => {
         event.preventDefault();
@@ -612,6 +626,8 @@
         };
         reader.readAsText(file);
     });
+
+
 </script>
 
 </html>

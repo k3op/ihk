@@ -434,6 +434,7 @@
             timerBox.classList.remove("yellow");
             timerBox.classList.add("waiting");
             duration_presentation = time_presentation * 60 * 1000;
+            sessionStorage.setItem("duration_presentation", duration_presentation)
             document.getElementById("time_presentation").innerHTML = "Dauer Präsentation: " + time_presentation + " min.";
             document.getElementById("btn_skip").innerText = "Wartezeit überspringen";
         }
@@ -510,6 +511,7 @@
             timerBox.classList.add("green");
 
             startTime = Date.now();
+            sessionStorage.setItem("start_time", startTime);
             targetTime = startTime + (examDuration * 60 * 1000); // Convert seconds to milliseconds
 
             t_state = 1;
@@ -554,7 +556,9 @@
 
             let elap_minutes = parseInt(duration_presentation / 60);
             let elap_seconds = parseInt(duration_presentation % 60);
-            document.getElementById("presentation_duration").innerText = "Dauer Präsentation: " + `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}` + " min.";
+            let duration_string = `${String(elap_minutes).padStart(2, '0')}:${String(elap_seconds).padStart(2, '0')}`
+            sessionStorage.setItem("duration_presentation", duration_string)
+            document.getElementById("presentation_duration").innerText = "Dauer Präsentation: " + duration_string + " min.";
             document.getElementById("presentation_duration").classList.remove("hidden");
             document.getElementById('btn_skip').innerText = "Pause überspringen";
         }
